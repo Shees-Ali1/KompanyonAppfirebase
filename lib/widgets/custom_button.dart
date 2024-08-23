@@ -13,6 +13,7 @@ class CustomButton extends StatelessWidget {
   final double fontSize;
   final FontWeight fontWeight;
   final BoxBorder? border;
+  final bool isLoading;
 
   CustomButton({
     required this.text,
@@ -23,13 +24,13 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.borderRadius = 12,
     this.fontSize = 14,
-    this.fontWeight = FontWeight.w500, this.border,
+    this.fontWeight = FontWeight.w500, this.border,  this.isLoading = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: isLoading ? null: onPressed,
       child: Container(
         margin: EdgeInsets.only(bottom: 21.h),
         width: width != null ? width!.w : null,
@@ -40,7 +41,11 @@ class CustomButton extends StatelessWidget {
           border: border
         ),
         child: Center(
-          child: Text(
+          child:  isLoading ?
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(textColor),):
+          Text(
+
             text,
             style: TextStyle(
               color: textColor,

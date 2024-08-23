@@ -13,6 +13,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../controller/signup_contoller.dart';
+
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -26,8 +28,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
   final TextEditingController emailController1 = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController passwordController1 = TextEditingController();
-  final TextEditingController retypepasswordController =
-      TextEditingController();
+  final TextEditingController retypasswordController = TextEditingController();
+  final SignupController signupController = Get.put(SignupController()); // Initialize the controller
 
   // Focus nodes for text fields
   final FocusNode _emailFocusNode = FocusNode();
@@ -42,6 +44,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
   bool ishowcontent = false;
   bool isselected = false;
   String isselectedsignup = "Signup";
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -78,11 +81,43 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _controller.dispose();
-    // Dispose focus nodes
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _retypePasswordFocusNode.dispose();
     super.dispose();
+  }
+
+  void _handleSignUp() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final confirmPassword = retypasswordController.text.trim();
+
+    if (password != confirmPassword) {
+      // Handle password mismatch
+      print('Passwords do not match');
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      await signupController.signUp(email, password);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NavBar()), // Update to actual navigation
+      );
+    } catch (e) {
+      // Handle sign-up error
+      print('Sign-up error: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -262,7 +297,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         vertical: 5, horizontal: 10),
                                     hint: 'Confirm Password',
                                     keyboard: TextInputType.text,
-                                    controller: retypepasswordController,
+                                    controller: retypasswordController,
                                     focusNode:
                                         _retypePasswordFocusNode, // Added focusNode
                                   ),
@@ -272,20 +307,22 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     child: CustomButton(
                                       text: 'Create Account',
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                NavBar(), // Replace 'Login' with your login screen widget
-                                          ),
-                                        );
-                                        print('Create Account button pressed');
+                                        _handleSignUp();
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) =>
+                                        //         NavBar(), // Replace 'Login' with your login screen widget
+                                        //   ),
+                                        // );
+                                        // print('Create Account button pressed');
                                       },
                                       width: 327,
                                       height: 52,
                                       borderRadius: 12,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
+                                      isLoading: _isLoading,
                                     ),
                                   ),
                                   SizedBox(height: 24.h),
