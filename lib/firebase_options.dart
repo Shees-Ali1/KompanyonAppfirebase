@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBpftffJHEYfUn6oXgcjcVwpOuHb1twJZI',
-    appId: '1:202521412885:web:686151bc398b7deddb151c',
-    messagingSenderId: '202521412885',
-    projectId: 'kompanyon-94c73',
-    authDomain: 'kompanyon-94c73.firebaseapp.com',
-    storageBucket: 'kompanyon-94c73.appspot.com',
-    measurementId: 'G-TGPCG1CSMT',
+    apiKey: 'AIzaSyCQlDU0oUoFIU3NIMF20HZ5jYTpBVlWTF0',
+    appId: '1:552938282575:web:08d8cd038e9b740f6d943a',
+    messagingSenderId: '552938282575',
+    projectId: 'kompanyonapp-c60f8',
+    authDomain: 'kompanyonapp-c60f8.firebaseapp.com',
+    storageBucket: 'kompanyonapp-c60f8.appspot.com',
+    measurementId: 'G-4FEN5BFFDK',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCmc7w0_MNVCQ81Z6Yg19z3YxyqQ37NO38',
-    appId: '1:202521412885:android:47381b13130e2043db151c',
-    messagingSenderId: '202521412885',
-    projectId: 'kompanyon-94c73',
-    storageBucket: 'kompanyon-94c73.appspot.com',
+    apiKey: 'AIzaSyAkR0zSkfUN0byBXPVsT8zB68mOoDHohDg',
+    appId: '1:552938282575:android:909bf0416e49e14b6d943a',
+    messagingSenderId: '552938282575',
+    projectId: 'kompanyonapp-c60f8',
+    storageBucket: 'kompanyonapp-c60f8.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCkySJr1U1CPwIaw2R8HGB7sJWSudkPfKI',
-    appId: '1:202521412885:ios:53c88d2759313627db151c',
-    messagingSenderId: '202521412885',
-    projectId: 'kompanyon-94c73',
-    storageBucket: 'kompanyon-94c73.appspot.com',
+    apiKey: 'AIzaSyAkXQDz2X3822F0Iu5Li71CcelEZPoRPRY',
+    appId: '1:552938282575:ios:cef11eaf71a7f0d26d943a',
+    messagingSenderId: '552938282575',
+    projectId: 'kompanyonapp-c60f8',
+    storageBucket: 'kompanyonapp-c60f8.appspot.com',
     iosBundleId: 'com.example.kompanyonApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCkySJr1U1CPwIaw2R8HGB7sJWSudkPfKI',
-    appId: '1:202521412885:ios:53c88d2759313627db151c',
-    messagingSenderId: '202521412885',
-    projectId: 'kompanyon-94c73',
-    storageBucket: 'kompanyon-94c73.appspot.com',
+    apiKey: 'AIzaSyAkXQDz2X3822F0Iu5Li71CcelEZPoRPRY',
+    appId: '1:552938282575:ios:cef11eaf71a7f0d26d943a',
+    messagingSenderId: '552938282575',
+    projectId: 'kompanyonapp-c60f8',
+    storageBucket: 'kompanyonapp-c60f8.appspot.com',
     iosBundleId: 'com.example.kompanyonApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBpftffJHEYfUn6oXgcjcVwpOuHb1twJZI',
-    appId: '1:202521412885:web:af731a4acecfc603db151c',
-    messagingSenderId: '202521412885',
-    projectId: 'kompanyon-94c73',
-    authDomain: 'kompanyon-94c73.firebaseapp.com',
-    storageBucket: 'kompanyon-94c73.appspot.com',
-    measurementId: 'G-3WMQSB12FV',
+    apiKey: 'AIzaSyCQlDU0oUoFIU3NIMF20HZ5jYTpBVlWTF0',
+    appId: '1:552938282575:web:6c5472af3a86c03a6d943a',
+    messagingSenderId: '552938282575',
+    projectId: 'kompanyonapp-c60f8',
+    authDomain: 'kompanyonapp-c60f8.firebaseapp.com',
+    storageBucket: 'kompanyonapp-c60f8.appspot.com',
+    measurementId: 'G-BNPGP1RRTT',
   );
 }
