@@ -1,0 +1,187 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:kompanyon_app/const/color.dart';
+import 'package:kompanyon_app/const/image.dart';
+import 'package:kompanyon_app/widgets/custom_button.dart';
+import 'package:kompanyon_app/widgets/custom_inter_text.dart';
+import 'package:flutter_screenutil/src/size_extension.dart';
+import 'package:kompanyon_app/widgets/custom_textfield.dart';
+import 'package:image_picker/image_picker.dart';
+
+class EditProfile extends StatefulWidget {
+  const EditProfile({super.key});
+
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+  String? selectedRole;
+  final ImagePicker _picker = ImagePicker();
+  XFile? _pickedImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: backgroundColor,
+        leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Icon(
+              Icons.arrow_back,
+              color: primaryColor,
+              size: 35,
+            )),
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: InterCustomText(
+                    text: "Edit Profile",
+                    textColor: primaryColor,
+                    fontsize: 26.sp,
+                  ),
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                Container(
+                  key: ValueKey<String>(_pickedImage?.path ?? 'default'),
+                  width: 100.w,
+                  height: 120.h,
+                  clipBehavior: Clip.hardEdge,
+                  decoration: BoxDecoration(
+                      border: Border.all(color: primaryColor, width: 4),
+                      borderRadius: BorderRadius.circular(12.r),
+                      image: DecorationImage(
+                          image: _pickedImage != null
+                              ? FileImage(File(_pickedImage!.path))
+                              : AssetImage(
+                                  AppImages.profilePic,
+                                ),
+                          fit: BoxFit.cover)),
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                CustomButton(
+                  text: "Change Photo",
+                  onPressed: () {
+                    _selectImage();
+                  },
+                  height: 70.h,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 14.sp,
+                  textColor: secondaryText,
+                  color: Colors.white,
+                  width: 150.w,
+                  border: Border.all(color: containerBorder),
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                InputField(
+                  hint: "Display Name",
+                  keyboard: TextInputType.name,
+                  label: "Full Name",
+                ),
+                SizedBox(
+                  height: 10.h,
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    filled: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12.0,
+                      horizontal: 10.0,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: containerBorder,
+                        ),
+                        borderRadius: BorderRadius.circular(12.r)),
+                    // border: OutlineInputBorder(borderSide: BorderSide(color: containerBorder)),
+                    // border: OutlineInputBorder(borderSide: BorderSide(color: containerBorder)),
+                    border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: BorderRadius.circular(12.r)),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: BorderRadius.circular(12.r)),
+                  ),
+                  hint: InterCustomText(
+                    text: '[role]',
+                    textColor: primaryColor,
+                  ),
+                  // Placeholder text
+                  value: selectedRole,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedRole = newValue;
+                    });
+                  },
+                  items: <String>['Admin', 'User', 'Guest']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+
+                      value: value,
+                      child: InterCustomText(
+                        text: value,
+                        textColor: primaryColor,
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(
+                  height: 15.h,
+                ),
+                InputField(
+                  hint: "Short Description",
+                  keyboard: TextInputType.name,
+                  label: "Short Description",
+                  maxlines: 3,
+                ),
+                SizedBox(
+                  height: 40.h,
+                ),
+                CustomButton(
+                  text: "Save Changes",
+                  onPressed: () {},
+                  height: 70.h,
+                  fontSize: 20.sp,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _selectImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _pickedImage = image;
+      });
+    }
+  }
+}

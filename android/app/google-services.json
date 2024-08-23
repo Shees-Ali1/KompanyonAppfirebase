@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "202521412885",
+    "project_id": "kompanyon-94c73",
+    "storage_bucket": "kompanyon-94c73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202521412885:android:dad03963defdbf39db151c",
+        "android_client_info": {
+          "package_name": "com.company.kompanyon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmc7w0_MNVCQ81Z6Yg19z3YxyqQ37NO38"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202521412885:android:47381b13130e2043db151c",
+        "android_client_info": {
+          "package_name": "com.example.Kompanyon_App"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmc7w0_MNVCQ81Z6Yg19z3YxyqQ37NO38"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
