@@ -68,28 +68,23 @@ class _ClickableWheelState extends State<ClickableWheel> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 300,
-            child: ListWheelScrollView.useDelegate(
-              controller: _scrollController,
-              itemExtent: ClickableWheel._itemHeight,
-              physics: FixedExtentScrollPhysics(),
-              perspective: 0.0009,
-              onSelectedItemChanged: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-              childDelegate: ListWheelChildBuilderDelegate(
-                builder: (context, index) => _child(index),
-                childCount: widget.titles.length,
-              ),
-            ),
+      body: SizedBox(
+        height: 300,
+        child: ListWheelScrollView.useDelegate(
+          controller: _scrollController,
+          itemExtent: ClickableWheel._itemHeight,
+          physics: FixedExtentScrollPhysics(),
+          perspective: 0.0009,
+          onSelectedItemChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          childDelegate: ListWheelChildBuilderDelegate(
+            builder: (context, index) => _child(index),
+            childCount: widget.titles.length,
           ),
-        ],
+        ),
       ),
     );
   }

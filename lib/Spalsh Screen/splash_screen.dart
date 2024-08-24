@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:kompanyon_app/controller/user_controller.dart';
 import '../const/image.dart';
 import '../view/transition_screen/transition_one.dart';
+import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,12 +13,15 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   @override
   late final AnimationController _controller;
+  final UserController userController = Get.find();
+
   late final Animation<double> _opacityAnimation;
   late final AnimationController _controller2;
-  void initState() {
+  Future<void> initState() async {
     super.initState();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
@@ -41,6 +46,8 @@ class _SplashScreenState extends State<SplashScreen>with TickerProviderStateMixi
     );
 
     _controller.forward();
+    await userController.getDeviceStoreToken();
+
     _navigateToNextScreen();
   }
 
