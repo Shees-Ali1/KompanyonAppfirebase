@@ -5,10 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 
-class UserController extends GetxController{
+class UserController extends GetxController {
   String? token;
   var userEmail = ''.obs;
-
+  var userName = ''.obs;
+  var userProfileImageUrl = ''.obs;
 
   @override
   void onInit() {
@@ -39,6 +40,7 @@ class UserController extends GetxController{
       print('Error Storing token');
     }
   }
+
   Future<void> getUserData() async {
     try {
       if (FirebaseAuth.instance.currentUser != null) {
@@ -48,16 +50,12 @@ class UserController extends GetxController{
             .get();
         if (userDoc.exists) {
           userEmail.value = userDoc.data()?['email'] ?? '';
+          userName.value = userDoc.data()?['name'] ?? '';
+          userProfileImageUrl.value = userDoc.data()?['profile_image'] ?? '';
         }
       }
     } catch (e) {
       print('Error fetching user data: $e');
     }
   }
-
 }
-
-
-
-
-

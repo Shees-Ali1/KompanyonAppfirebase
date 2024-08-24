@@ -46,10 +46,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
       parent: _controller,
       curve: Curves.easeIn,
     );
-    _upSlideAnimation = Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
-        .animate(_controller);
+    _upSlideAnimation =
+        Tween<Offset>(begin: const Offset(0.0, 1.0), end: Offset.zero)
+            .animate(_controller);
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 0.2),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -90,7 +91,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
         ),
       ),
       body: SingleChildScrollView(
-        // padding: EdgeInsets.symmetric(horizontal: 20.0),
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
@@ -102,17 +102,17 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   height: 20.h,
                 ),
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   alignment: Alignment.center,
                   width: double.infinity,
                   color: Colors.white,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         AnimatedSwitcher(
-                          duration: Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 300),
                           transitionBuilder:
                               (Widget child, Animation<double> animation) {
                             return FadeTransition(
@@ -120,35 +120,42 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               child: child,
                             );
                           },
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            // key:
-                            //   ValueKey<String>(_pickedImage?.path ?? 'default'),
-                            // _pickedImage != null
-                            //     ? FileImage(File(_pickedImage!.path))
-                            decoration: BoxDecoration(
+                          child: Obx(() {
+                            return Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                image: DecorationImage(
-                                  fit: BoxFit.cover,
-                                  image: AssetImage(AppImages.profilePic)
-                                  as ImageProvider,
-                                )),
-                          ),
+                                image: userController
+                                        .userProfileImageUrl.isNotEmpty
+                                    ? DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(userController
+                                            .userProfileImageUrl.value),
+                                      )
+                                    : const DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: AssetImage(AppImages.profilePic),
+                                      ),
+                              ),
+                            );
+                          }),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 18,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            InterCustomText(
-                              text: 'Leo Alston',
-                              textColor: secondaryText,
-                              fontWeight: FontWeight.w500,
-                              fontsize: 20,
-                            ),
-                            SizedBox(
+                            Obx(() {
+                              return InterCustomText(
+                                text: userController.userName.value,
+                                textColor: secondaryText,
+                                fontWeight: FontWeight.w500,
+                                fontsize: 20,
+                              );
+                            }),
+                            const SizedBox(
                               height: 2,
                             ),
                             Obx(() {
@@ -179,7 +186,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   height: 10.h,
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InterCustomText(
@@ -192,7 +199,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   ),
                 ),
 
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -201,12 +208,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     alignment: Alignment.centerLeft,
                     width: double.infinity,
                     height: 60.h,
-                    decoration: BoxDecoration(color: Colors.white),
-                    child: Row(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InterCustomText(
@@ -222,23 +229,24 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 ),
-                Divider(
+                const Divider(
                   height: 0,
                 ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => EditProfile()),
+                      MaterialPageRoute(
+                          builder: (context) => const EditProfile()),
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     alignment: Alignment.centerLeft,
                     width: double.infinity,
                     height: 60.h,
-                    decoration: BoxDecoration(color: Colors.white),
-                    child: Row(
+                    decoration: const BoxDecoration(color: Colors.white),
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         InterCustomText(
@@ -254,9 +262,9 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: InterCustomText(
@@ -268,11 +276,11 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Container(
                   alignment: Alignment.centerLeft,
                   width: double.infinity,
-                  decoration: BoxDecoration(color: Colors.white),
+                  decoration: const BoxDecoration(color: Colors.white),
                   child: Column(
                     children: [
                       SizedBox(
@@ -283,10 +291,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AccountSettings()),
+                                builder: (context) => const AccountSettings()),
                           );
                         },
-                        child: Padding(
+                        child: const Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,13 +315,13 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                       SizedBox(
                         height: 20.h,
                       ),
-                      Divider(
+                      const Divider(
                         height: 0,
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(
                             vertical: 15.h, horizontal: 10.w),
-                        decoration: BoxDecoration(color: backgroundColor),
+                        decoration: const BoxDecoration(color: backgroundColor),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -340,7 +348,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             ? Colors.white
                                             : primaryText,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                       InterCustomText(
@@ -380,7 +388,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                             ? Colors.white
                                             : primaryText,
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                       InterCustomText(
@@ -401,7 +409,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                   ),
                 ),
 
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 Center(
                   child: FadeTransition(
@@ -419,7 +427,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             decoration: BoxDecoration(
                                 color: secondarybackgroundColor,
                                 borderRadius: BorderRadius.circular(12)),
-                            child: InterCustomText(
+                            child: const InterCustomText(
                               text: 'Log Out',
                               textColor: secondaryText,
                             ),
@@ -427,7 +435,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         )),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
               ],
             ),
           ),
@@ -436,10 +444,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildAnimatedField(String label,
-      String hint,
-      TextInputType keyboardType,
-      FocusNode focusNode,) {
+  Widget _buildAnimatedField(
+    String label,
+    String hint,
+    TextInputType keyboardType,
+    FocusNode focusNode,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -452,7 +462,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
             textAlign: TextAlign.start,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(

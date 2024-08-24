@@ -15,5 +15,7 @@ class AppImages {
   static const youtube = "assets/images/youtube.png";
   static const instagram = "assets/images/instagram.png";
   static const linkedin = "assets/images/linkedin.png";
+  static const avatar = "assets/images/avatarr.png";
+
 
 }

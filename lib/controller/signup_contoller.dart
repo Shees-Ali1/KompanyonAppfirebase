@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/controller/login_controller.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
+
 final LoginController login = Get.put(LoginController());
 
 class SignupController extends GetxController {
@@ -13,12 +14,14 @@ class SignupController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController retypasswordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
   var isselectedsignup = "Signup".obs;
 
   Future<void> handleSignUp() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
     final confirmPassword = retypasswordController.text.trim();
+    final name = nameController.text.trim();
 
     if (password != confirmPassword) {
       // Handle password mismatch
@@ -31,7 +34,8 @@ class SignupController extends GetxController {
     try {
       login.isLoading.value = true;
 
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -39,6 +43,7 @@ class SignupController extends GetxController {
       User? user = userCredential.user;
       if (user != null) {
         await _firestore.collection('userDetails').doc(user.uid).set({
+          'name': name,
           'email': email,
           'password': password,
           'createAt': Timestamp.now(),
@@ -51,6 +56,7 @@ class SignupController extends GetxController {
         emailController.clear();
         passwordController.clear();
         retypasswordController.clear();
+        nameController.clear();
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -68,5 +74,4 @@ class SignupController extends GetxController {
       login.isLoading.value = false;
     }
   }
-
 }

@@ -1,4 +1,10 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/const/image.dart';
 import 'package:kompanyon_app/controller/login_controller.dart';
@@ -28,10 +34,14 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _retypePasswordFocusNode = FocusNode();
+  final FocusNode _nameFocusNode = FocusNode();
   late AnimationController _controller;
   bool _isLogoInFinalPosition = false;
   late final Animation<double> _scaleAnimation;
   bool ishowcontent = false;
+  String? selectedRole;
+  final ImagePicker _picker = ImagePicker();
+  XFile? _pickedImage;
 
   @override
   void initState() {
@@ -43,7 +53,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
 
     _scaleAnimation = Tween<double>(begin: 2.0, end: 1.0).animate(_controller);
 
-    Future.delayed(Duration(milliseconds: 600), () {
+    Future.delayed(const Duration(milliseconds: 600), () {
       setState(() {
         _isLogoInFinalPosition = true;
       });
@@ -61,6 +71,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _retypePasswordFocusNode.dispose();
+    _nameFocusNode.dispose();
     super.dispose();
   }
 
@@ -81,7 +92,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
           children: [
             if (ishowcontent == false)
               AnimatedPositioned(
-                duration: Duration(milliseconds: 600),
+                duration: const Duration(milliseconds: 600),
                 top: _isLogoInFinalPosition
                     ? Get.height * .13
                     : (Get.height / 2) - 37,
@@ -109,7 +120,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                         SizedBox(height: 160.h),
                         Row(
                           children: [
-                            Icon(FontAwesomeIcons.anchor,
+                            const Icon(FontAwesomeIcons.anchor,
                                 size: 25, // Adjust the size as needed
                                 color:
                                     primaryColor // Adjust the color as needed
@@ -212,12 +223,54 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                             ),
                           ],
                         ),
-                        SizedBox(height: 24.h),
+                        SizedBox(height: 10.h),
                         signupController.isselectedsignup == "Signup"
                             ? Column(
                                 children: [
+                                  Container(
+                                    key: ValueKey<String>(
+                                        _pickedImage?.path ?? 'default'),
+                                    width: 100.w,
+                                    height: 120.h,
+                                    clipBehavior: Clip.hardEdge,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: primaryColor, width: 3),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      image: _pickedImage != null
+                                          ? DecorationImage(
+                                              image: FileImage(
+                                                  File(_pickedImage!.path)),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                    ),
+                                    child: _pickedImage == null
+                                        ? Center(
+                                            child: IconButton(
+                                              icon:
+                                                  const Icon(Icons.add_a_photo),
+                                              color: primaryColor,
+                                              onPressed: () {
+                                                _selectImage();
+                                              },
+                                            ),
+                                          )
+                                        : null, // No child when _pickedImage is not null
+                                  ),
+                                  SizedBox(height: 10.h),
                                   InputField(
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 5, horizontal: 10),
+                                    hint: 'Name',
+                                    keyboard: TextInputType.name,
+                                    controller: signupController.nameController,
+                                    focusNode:
+                                        _nameFocusNode, // Added focusNode
+                                  ),
+                                  SizedBox(height: 24.h),
+                                  InputField(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 10),
                                     hint: 'Email',
                                     keyboard: TextInputType.emailAddress,
@@ -227,8 +280,60 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         _emailFocusNode, // Added focusNode
                                   ),
                                   SizedBox(height: 24.h),
+                                  DropdownButtonFormField<String>(
+                                    decoration: InputDecoration(
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        vertical: 12.0,
+                                        horizontal: 10.0,
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: containerBorder,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12.r)),
+                                      border: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: primaryColor,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12.r)),
+                                      enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                            color: primaryColor,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12.r)),
+                                    ),
+                                    hint: const InterCustomText(
+                                      text: '[role]',
+                                      textColor: primaryColor,
+                                    ),
+                                    // Placeholder text
+                                    value: selectedRole,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedRole = newValue;
+                                      });
+                                    },
+                                    items: <String>['Admin', 'User', 'Guest']
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: InterCustomText(
+                                          text: value,
+                                          textColor: primaryColor,
+                                        ),
+                                      );
+                                    }).toList(),
+                                  ),
+                                  SizedBox(height: 24.h),
                                   InputField(
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 10),
                                     hint: 'Password',
                                     keyboard: TextInputType.text,
@@ -239,7 +344,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                   ),
                                   SizedBox(height: 24.h),
                                   InputField(
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 10),
                                     hint: 'Confirm Password',
                                     keyboard: TextInputType.text,
@@ -270,7 +375,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                             : Column(
                                 children: [
                                   InputField(
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 10),
                                     hint: 'Email',
                                     keyboard: TextInputType.text,
@@ -283,7 +388,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     height: 24.h,
                                   ),
                                   InputField(
-                                    contentPadding: EdgeInsets.symmetric(
+                                    contentPadding: const EdgeInsets.symmetric(
                                         vertical: 5, horizontal: 10),
                                     hint: 'Password',
                                     keyboard: TextInputType.text,
@@ -436,5 +541,42 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future<void> _selectImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _pickedImage = image;
+      });
+      await _uploadImageToFirebase(image);
+    }
+  }
+
+  // Storage
+  Future<void> _uploadImageToFirebase(XFile image) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref();
+      final imageRef = storageRef
+          .child('user_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final uploadTask = imageRef.putFile(File(image.path));
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      await _saveImageUrlToFirestore(downloadUrl);
+      print('Image uploaded and URL saved successfully: $downloadUrl');
+    } catch (e) {
+      print('Failed to upload image: $e');
+    }
+  }
+
+  // Database
+  Future<void> _saveImageUrlToFirestore(String downloadUrl) async {
+    final String userId = FirebaseAuth.instance.currentUser!.uid;
+    final DocumentReference userDocRef =
+        FirebaseFirestore.instance.collection('userDetails').doc(userId);
+    await userDocRef.set({
+      'profile_image': downloadUrl,
+    }, SetOptions(merge: true));
   }
 }
