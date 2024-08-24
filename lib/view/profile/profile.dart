@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/const/image.dart';
+import 'package:kompanyon_app/controller/login_controller.dart';
 import 'package:kompanyon_app/view/Auth/signup_screen.dart';
 import 'package:kompanyon_app/view/profile/account_settings.dart';
 import 'package:kompanyon_app/view/profile/change_password.dart';
@@ -27,6 +28,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   late Animation<Offset> _upSlideAnimation;
   late Animation<Offset> _slideAnimation;
   final UserController userController = Get.put(UserController());
+  final LoginController login = Get.put(LoginController());
 
   bool isselected = false;
 
@@ -130,7 +132,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
                                   image: AssetImage(AppImages.profilePic)
-                                      as ImageProvider,
+                                  as ImageProvider,
                                 )),
                           ),
                         ),
@@ -149,12 +151,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                             SizedBox(
                               height: 2,
                             ),
-                            InterCustomText(
-                              text: userController.userEmail.value,
-                              textColor: secondaryText,
-                              fontWeight: FontWeight.w500,
-                              fontsize: 14,
-                            ),
+                            Obx(() {
+                              return InterCustomText(
+                                text: userController.userEmail.value,
+                                textColor: secondaryText,
+                                fontWeight: FontWeight.w500,
+                                fontsize: 14,
+                              );
+                            }),
                           ],
                         )
                       ],
@@ -406,10 +410,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                         position: _slideAnimation,
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Signup()),
-                            );
+                            login.logOut();
                           },
                           child: Container(
                             width: 90,
@@ -435,12 +436,10 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget _buildAnimatedField(
-    String label,
-    String hint,
-    TextInputType keyboardType,
-    FocusNode focusNode,
-  ) {
+  Widget _buildAnimatedField(String label,
+      String hint,
+      TextInputType keyboardType,
+      FocusNode focusNode,) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -1,18 +1,13 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:kompanyon_app/User%20Pathway/input_message1.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/const/image.dart';
-import 'package:kompanyon_app/view/Auth/login_screen.dart';
-import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
+import 'package:kompanyon_app/controller/login_controller.dart';
 import 'package:kompanyon_app/widgets/custom_button.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/widgets/custom_textfield.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import '../../controller/signup_contoller.dart';
 
 class Signup extends StatefulWidget {
@@ -24,27 +19,19 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
   // Controllers for text fields
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController emailController1 = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController passwordController1 = TextEditingController();
-  final TextEditingController retypasswordController = TextEditingController();
-  final SignupController signupController = Get.put(SignupController()); // Initialize the controller
+  final SignupController signupController =
+      Get.put(SignupController()); // Initialize the controller
+  final LoginController loginController =
+      Get.put(LoginController()); // Initialize the controller
 
   // Focus nodes for text fields
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _retypePasswordFocusNode = FocusNode();
-
   late AnimationController _controller;
-  late final Animation<double> _logoAnimation;
-  late final Animation<double> _contentAnimation;
   bool _isLogoInFinalPosition = false;
   late final Animation<double> _scaleAnimation;
   bool ishowcontent = false;
-  bool isselected = false;
-  String isselectedsignup = "Signup";
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -52,16 +39,6 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
     _controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
-    );
-
-    _logoAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-
-    _contentAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Interval(0.5, 1.0, curve: Curves.easeInOut),
     );
 
     _scaleAnimation = Tween<double>(begin: 2.0, end: 1.0).animate(_controller);
@@ -85,37 +62,6 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
     _passwordFocusNode.dispose();
     _retypePasswordFocusNode.dispose();
     super.dispose();
-  }
-
-  void _handleSignUp() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
-    final confirmPassword = retypasswordController.text.trim();
-
-    if (password != confirmPassword) {
-      // Handle password mismatch
-      print('Passwords do not match');
-      Get.snackbar('Error', "Passwords do not match");
-      setState(() {
-        _isLoading = false;
-      });
-      return;
-    }
-
-    try {
-      await signupController.signUp(email, password);
-
-    } catch (e) {
-      // Handle sign-up error
-      print('Sign-up error: $e');
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   @override
@@ -201,7 +147,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                               onTap: () {
                                 // Handle the onTap event to set isselected
                                 setState(() {
-                                  isselectedsignup = "Signup";
+                                  signupController.isselectedsignup.value =
+                                      "Signup";
                                 });
                               },
                               child: Container(
@@ -209,7 +156,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                 height: 45,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
-                                  color: isselectedsignup == "Signup"
+                                  color: signupController.isselectedsignup ==
+                                          "Signup"
                                       ? primaryColor
                                       : Colors
                                           .white, // Change color based on isselected
@@ -218,9 +166,11 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                   child: InterCustomText(
                                     textAlign: TextAlign.center,
                                     text: 'Sign up',
-                                    textColor: isselectedsignup == "Signup"
-                                        ? Colors.white
-                                        : primaryColor,
+                                    textColor:
+                                        signupController.isselectedsignup ==
+                                                "Signup"
+                                            ? Colors.white
+                                            : primaryColor,
                                     fontsize: 18.sp,
                                   ),
                                 ),
@@ -229,17 +179,10 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                             SizedBox(width: 10.w),
                             GestureDetector(
                               onTap: () {
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         Login(), // Replace 'Login' with your login screen widget
-                                //   ),
-                                // );
-
                                 // Handle the onTap event to set isselected to false
                                 setState(() {
-                                  isselectedsignup = "Signin";
+                                  signupController.isselectedsignup.value =
+                                      "Signin";
                                 });
                               },
                               child: Container(
@@ -247,7 +190,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                 height: 45,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
-                                  color: isselectedsignup == "Signin"
+                                  color: signupController.isselectedsignup ==
+                                          "Signin"
                                       ? primaryColor
                                       : Colors
                                           .white, // Change color based on isselected
@@ -256,9 +200,11 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                   child: InterCustomText(
                                     textAlign: TextAlign.center,
                                     text: 'Sign in',
-                                    textColor: isselectedsignup == "Signin"
-                                        ? Colors.white
-                                        : primaryColor,
+                                    textColor:
+                                        signupController.isselectedsignup ==
+                                                "Signin"
+                                            ? Colors.white
+                                            : primaryColor,
                                     fontsize: 18.sp,
                                   ),
                                 ),
@@ -267,7 +213,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                           ],
                         ),
                         SizedBox(height: 24.h),
-                        isselectedsignup == "Signup"
+                        signupController.isselectedsignup == "Signup"
                             ? Column(
                                 children: [
                                   InputField(
@@ -275,7 +221,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         vertical: 5, horizontal: 10),
                                     hint: 'Email',
                                     keyboard: TextInputType.emailAddress,
-                                    controller: emailController,
+                                    controller:
+                                        signupController.emailController,
                                     focusNode:
                                         _emailFocusNode, // Added focusNode
                                   ),
@@ -285,7 +232,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         vertical: 5, horizontal: 10),
                                     hint: 'Password',
                                     keyboard: TextInputType.text,
-                                    controller: passwordController,
+                                    controller:
+                                        signupController.passwordController,
                                     focusNode:
                                         _passwordFocusNode, // Added focusNode
                                   ),
@@ -295,7 +243,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         vertical: 5, horizontal: 10),
                                     hint: 'Confirm Password',
                                     keyboard: TextInputType.text,
-                                    controller: retypasswordController,
+                                    controller:
+                                        signupController.retypasswordController,
                                     focusNode:
                                         _retypePasswordFocusNode, // Added focusNode
                                   ),
@@ -305,22 +254,14 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     child: CustomButton(
                                       text: 'Create Account',
                                       onPressed: () {
-                                        _handleSignUp();
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //         NavBar(), // Replace 'Login' with your login screen widget
-                                        //   ),
-                                        // );
-                                        // print('Create Account button pressed');
+                                        signupController.handleSignUp();
+                                        print('Create Account button pressed');
                                       },
                                       width: 327,
                                       height: 52,
                                       borderRadius: 12,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      isLoading: _isLoading,
                                     ),
                                   ),
                                   SizedBox(height: 24.h),
@@ -333,7 +274,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         vertical: 5, horizontal: 10),
                                     hint: 'Email',
                                     keyboard: TextInputType.text,
-                                    controller: emailController1,
+                                    controller:
+                                        loginController.emailController1,
                                     focusNode:
                                         _emailFocusNode, // Added focusNode
                                   ),
@@ -345,7 +287,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                         vertical: 5, horizontal: 10),
                                     hint: 'Password',
                                     keyboard: TextInputType.text,
-                                    controller: passwordController1,
+                                    controller:
+                                        loginController.passwordController1,
                                     focusNode:
                                         _passwordFocusNode, // Added focusNode
                                   ),
@@ -355,11 +298,8 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                   CustomButton(
                                     text: 'Sign-In',
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => NavBar()),
-                                      );
+                                      loginController.login();
+
                                       print('Sign-In button pressed');
                                     },
                                     width: 327,
@@ -371,7 +311,11 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                   SizedBox(
                                     height: 20.h,
                                   ),
-                                  InterCustomText(text: 'Forgot Password?', textColor: primaryColor,fontsize: 14.sp,)
+                                  InterCustomText(
+                                    text: 'Forgot Password?',
+                                    textColor: primaryColor,
+                                    fontsize: 14.sp,
+                                  )
                                   // Row(
                                   //   mainAxisAlignment: MainAxisAlignment.center,
                                   //   children: [

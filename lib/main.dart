@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/Spalsh%20Screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:kompanyon_app/view/Auth/signup_screen.dart';
 import 'firebase_options.dart';
+import 'helper/bindings.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,10 +26,8 @@ class MyApp extends StatelessWidget {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
             home: SplashScreen(),
+            initialBinding: UserBinding(),
           );
         });
   }
 }
-
-
-

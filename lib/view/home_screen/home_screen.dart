@@ -1,13 +1,10 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:kompanyon_app/User%20Pathway/user_pathwayBegin.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kompanyon_app/clickable_wheel.dart';
 import 'package:kompanyon_app/const/color.dart';
-import 'package:kompanyon_app/reflection/reflection.dart';
-import 'package:kompanyon_app/view/Leadership_screens/Leadership.dart';
-import 'package:kompanyon_app/view/home_screen/components/hear_screen.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kompanyon_app/widgets/custom_textContainer.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -21,10 +18,36 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
+  SharedPreferences? _prefs;
+  int _currentIndex = 0;
+
+  final List<String> _affirmations = [
+    "You are cultivating mindfulness in your workplace",
+    "Your team's well-being is improving every day",
+    "You are fostering a culture of resilience and collaboration",
+    "Your productivity is enhanced through mindfulness practices",
+    "You are creating a positive work environment",
+    "Your emotional intelligence is growing stronger",
+    "You are reducing stress and increasing focus",
+    "Your team dynamics are improving through self-awareness",
+    "You are embracing neuroplasticity for personal growth",
+    "Your workplace is becoming more harmonious and efficient"
+        "You are balancing work and well-being effectively",
+    "Your company culture is thriving with mindfulness",
+    "You are contributing to a healthier work ecosystem",
+    "Your leadership skills are evolving through mindfulness",
+    "You are fostering better communication within your team",
+    "Your workplace is transforming positively day by day",
+    "You are embracing change with a calm and focused mind",
+    "Your decision-making is improving through mindfulness practices",
+    "You are part of a supportive and mindful work community",
+    "Your team's potential is unlocking through collective well-being"
+  ];
 
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -34,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       curve: Curves.easeIn,
     );
     _slideAnimation = Tween<Offset>(
-      begin: Offset(0, 1),
-      end: Offset(0, 0),
+      begin: const Offset(0, 1),
+      end: const Offset(0, 0),
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
@@ -48,12 +71,37 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       curve: Curves.elasticOut,
     ));
     _controller.forward();
+
+    _loadAffirmationIndex();
+    _incrementAffirmationIndex();
+  }
+
+  Future<void> _loadAffirmationIndex() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _currentIndex = _prefs?.getInt('currentIndex') ?? 0;
+    });
+
+    // If all affirmations have been shown, reset the index
+    if (_currentIndex >= _affirmations.length) {
+      _currentIndex = 0;
+      _prefs?.setInt('currentIndex', 0);
+    }
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _incrementAffirmationIndex() {
+    setState(() {
+      _currentIndex = (_currentIndex + 1) % _affirmations.length;
+      _prefs?.setInt('currentIndex', _currentIndex);
+      print("current");
+
+    });
   }
 
   @override
@@ -70,9 +118,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       backgroundColor: backgroundColor,
       body: Column(
         children: [
-          SizedBox(
-            height: 86.h,
-          ),
+          SizedBox(height: 86.h),
           FadeTransition(
             opacity: _fadeAnimation,
             child: SlideTransition(
@@ -81,15 +127,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 padding: EdgeInsets.only(left: 73.w, right: 86.w),
                 child: InterCustomText(
                   textAlign: TextAlign.center,
-                  text:
-                  'Eventually this will be a dashboard, but for now we can plug-in words of affirmation',
+                  text: _affirmations[_currentIndex], // Display the current affirmation
                   textColor: primaryColor,
                   fontsize: 24.sp,
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20,),
+          SizedBox(height: 20),
           Expanded(
             child: FadeTransition(
               opacity: _fadeAnimation,
@@ -101,6 +146,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
+
         ],
       ),
     );

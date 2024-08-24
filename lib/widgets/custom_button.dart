@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/const/color.dart';
+import 'package:get/get.dart';
+
+import 'package:kompanyon_app/controller/login_controller.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -13,7 +16,6 @@ class CustomButton extends StatelessWidget {
   final double fontSize;
   final FontWeight fontWeight;
   final BoxBorder? border;
-  final bool isLoading;
 
   CustomButton({
     required this.text,
@@ -24,55 +26,37 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.borderRadius = 12,
     this.fontSize = 14,
-    this.fontWeight = FontWeight.w500, this.border,  this.isLoading = false,
+    this.fontWeight = FontWeight.w500,
+    this.border,
   });
 
   @override
   Widget build(BuildContext context) {
+    LoginController login = Get.find();
     return GestureDetector(
-      onTap: isLoading ? null: onPressed,
+      onTap: onPressed,
       child: Container(
-        margin: EdgeInsets.only(bottom: 21.h),
-        width: width != null ? width!.w : null,
-        height: height != null ? height!.h : null,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(borderRadius.r),
-          border: border
-        ),
-        child: Center(
-          child:  isLoading ?
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(textColor),):
-          Text(
-
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: fontSize.sp,
-              fontWeight: fontWeight,
-            ),
-          ),
-        ),
-      ),
+          margin: EdgeInsets.only(bottom: 21.h),
+          width: width != null ? width!.w : null,
+          height: height != null ? height!.h : null,
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(borderRadius.r),
+              border: border),
+          child: Obx(
+            () => login.isLoading.value == false
+                ? Center(
+                  child: Text(
+                      text,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: fontSize.sp,
+                        fontWeight: fontWeight,
+                      ),
+                    ),
+                )
+                : Center(child: CircularProgressIndicator(color: Colors.white,)),
+          )),
     );
   }
 }
-
-/*
- Padding(
-            padding: EdgeInsets.symmetric(horizontal: 44.w),
-            child: CustomButton(
-              text: "",
-              fontSize: 16.sp,
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-
-                );
-              },
-              height: 52.h,
-            ),
-          )*/
