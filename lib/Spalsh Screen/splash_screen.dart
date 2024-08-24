@@ -13,16 +13,18 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
-  @override
+class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
   late final AnimationController _controller;
-  final UserController userController = Get.find();
+  final UserController userController = Get.put(UserController());
 
   late final Animation<double> _opacityAnimation;
   late final AnimationController _controller2;
-  Future<void> initState() async {
+  late final Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
     super.initState();
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -31,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
       duration: const Duration(seconds: 5),
       vsync: this,
     )..repeat();
+
     _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
         parent: _controller,
@@ -46,14 +49,18 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
-    await userController.getDeviceStoreToken();
 
+    // Call the method to perform asynchronous tasks
+    _initAsyncTasks();
+  }
+
+  Future<void> _initAsyncTasks() async {
+    await userController.getDeviceStoreToken();
     _navigateToNextScreen();
   }
 
-  late final Animation<double> _scaleAnimation;
   _navigateToNextScreen() async {
-    await Future.delayed(Duration(seconds: 2), () {});
+    await Future.delayed(const Duration(seconds: 2));
     Navigator.of(context).pushReplacement(_createRoute());
   }
 
@@ -69,7 +76,12 @@ class _SplashScreenState extends State<SplashScreen>
       },
     );
   }
-
+  @override
+  void dispose() {
+    _controller.dispose();
+    _controller2.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,4 +118,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
+
+
 }
