@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="gcm_defaultSenderId" translatable="false">552938282575</string>
-    <string name="google_api_key" translatable="false">AIzaSyAkR0zSkfUN0byBXPVsT8zB68mOoDHohDg</string>
-    <string name="google_app_id" translatable="false">1:552938282575:android:909bf0416e49e14b6d943a</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAkR0zSkfUN0byBXPVsT8zB68mOoDHohDg</string>
-    <string name="google_storage_bucket" translatable="false">kompanyonapp-c60f8.appspot.com</string>
-    <string name="project_id" translatable="false">kompanyonapp-c60f8</string>
-</resources>
