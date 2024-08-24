@@ -11,6 +11,8 @@ import 'package:kompanyon_app/widgets/custom_button.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
 import 'package:kompanyon_app/widgets/custom_textfield.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
+import '../../controller/user_controller.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -24,12 +26,14 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _upSlideAnimation;
   late Animation<Offset> _slideAnimation;
+  final UserController userController = Get.put(UserController());
 
   bool isselected = false;
 
   @override
   void initState() {
     super.initState();
+    userController.getUserData();
 
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
@@ -146,7 +150,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               height: 2,
                             ),
                             InterCustomText(
-                              text: 'leo.alston@example.com',
+                              text: userController.userEmail.value,
                               textColor: secondaryText,
                               fontWeight: FontWeight.w500,
                               fontsize: 14,
