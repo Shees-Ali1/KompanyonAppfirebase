@@ -98,6 +98,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
     if (password != confirmPassword) {
       // Handle password mismatch
       print('Passwords do not match');
+      Get.snackbar('Error', "Passwords do not match");
       setState(() {
         _isLoading = false;
       });
@@ -106,10 +107,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
 
     try {
       await signupController.signUp(email, password);
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => NavBar()), // Update to actual navigation
-      );
+
     } catch (e) {
       // Handle sign-up error
       print('Sign-up error: $e');

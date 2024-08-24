@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
 
 class SignupController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -18,8 +20,10 @@ class SignupController extends GetxController {
       if (user != null) {
         await _firestore.collection('userDetails').doc(user.uid).set({
           'email':email,
+          'password':password,
           'createAt': Timestamp.now(),
         });
+        Get.to(NavBar());
         print('User signed up: ${user.email}');
       }
     } on FirebaseAuthException catch (e) {
