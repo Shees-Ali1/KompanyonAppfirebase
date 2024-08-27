@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kompanyon_app/User%20Pathway/input_message2.dart';
-import 'package:kompanyon_app/User%20Pathway/slider3.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/custom_widgets/custom_container.dart';
 

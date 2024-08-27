@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,6 +11,8 @@ import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
 final LoginController login = Get.put(LoginController());
 
 class SignupController extends GetxController {
+  var selectedRole = ''.obs;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TextEditingController emailController = TextEditingController();
@@ -17,14 +21,13 @@ class SignupController extends GetxController {
   final TextEditingController nameController = TextEditingController();
   var isselectedsignup = "Signup".obs;
 
-  Future<void> handleSignUp() async {
+  Future<void> handleSignUp(File? profileImage) async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
     final confirmPassword = retypasswordController.text.trim();
     final name = nameController.text.trim();
 
     if (password != confirmPassword) {
-      // Handle password mismatch
       print('Passwords do not match');
       Get.snackbar('Error', "Passwords do not match",
           backgroundColor: whiteColor, colorText: Colors.black);
@@ -35,18 +38,29 @@ class SignupController extends GetxController {
       login.isLoading.value = true;
 
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       User? user = userCredential.user;
+
+
       if (user != null) {
+        String? profileImageUrl;
+
+        if (profileImage != null) {
+          // Upload profile image to Firebase Storage
+          profileImageUrl = await uploadProfileImage(user.uid, profileImage);
+        }
         await _firestore.collection('userDetails').doc(user.uid).set({
           'name': name,
           'email': email,
           'password': password,
           'createAt': Timestamp.now(),
+          'profileImageUrl': profileImageUrl,
+          'role': selectedRole.value,
+
         });
 
         Get.to(NavBar());
@@ -74,4 +88,19 @@ class SignupController extends GetxController {
       login.isLoading.value = false;
     }
   }
+  Future<String> uploadProfileImage(String userId, File profileImage) async {
+    try {
+      Reference storageRef = _storage.ref().child('profileImages/$userId.jpg');
+      UploadTask uploadTask = storageRef.putFile(profileImage);
+
+      TaskSnapshot snapshot = await uploadTask;
+      String downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading profile image: $e');
+      return '';
+    }
+  }
 }
+
+

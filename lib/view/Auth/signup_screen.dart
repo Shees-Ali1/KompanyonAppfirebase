@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -15,6 +14,7 @@ import 'package:kompanyon_app/widgets/custom_textfield.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../controller/signup_contoller.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -24,6 +24,18 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
+
+  File? _profileImage;
+  Future<void> _selectImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
   // Controllers for text fields
   final SignupController signupController =
       Get.put(SignupController()); // Initialize the controller
@@ -40,8 +52,6 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
   late final Animation<double> _scaleAnimation;
   bool ishowcontent = false;
   String? selectedRole;
-  final ImagePicker _picker = ImagePicker();
-  XFile? _pickedImage;
 
   @override
   void initState() {
@@ -228,36 +238,28 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                             ? Column(
                                 children: [
                                   Container(
-                                    key: ValueKey<String>(
-                                        _pickedImage?.path ?? 'default'),
+                                    key: ValueKey<String>(_profileImage?.path ?? 'default'),
                                     width: 100.w,
                                     height: 120.h,
                                     clipBehavior: Clip.hardEdge,
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: primaryColor, width: 3),
+                                      border: Border.all(color: primaryColor, width: 4),
                                       borderRadius: BorderRadius.circular(12.r),
-                                      image: _pickedImage != null
+                                      image: _profileImage != null
                                           ? DecorationImage(
-                                              image: FileImage(
-                                                  File(_pickedImage!.path)),
-                                              fit: BoxFit.cover,
-                                            )
+                                        image: FileImage(File(_profileImage!.path)),
+                                        fit: BoxFit.cover,
+                                      )
                                           : null,
                                     ),
-                                    child: _pickedImage == null
-                                        ? Center(
-                                            child: IconButton(
-                                              icon:
-                                                  const Icon(Icons.add_a_photo),
-                                              color: primaryColor,
-                                              onPressed: () {
-                                                _selectImage();
-                                              },
-                                            ),
-                                          )
-                                        : null, // No child when _pickedImage is not null
+                                    child: _profileImage == null
+                                        ? IconButton(
+                                      onPressed: _selectImage,
+                                      icon: Icon(Icons.add_a_photo, color: primaryColor),
+                                    )
+                                        : null,
                                   ),
+
                                   SizedBox(height: 10.h),
                                   InputField(
                                     contentPadding: const EdgeInsets.symmetric(
@@ -317,6 +319,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     onChanged: (String? newValue) {
                                       setState(() {
                                         selectedRole = newValue;
+                                        signupController.selectedRole.value = newValue!;
                                       });
                                     },
                                     items: <String>['Admin', 'User', 'Guest']
@@ -359,7 +362,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     child: CustomButton(
                                       text: 'Create Account',
                                       onPressed: () {
-                                        signupController.handleSignUp();
+                                        signupController.handleSignUp(_profileImage);
                                         print('Create Account button pressed');
                                       },
                                       width: 327,
@@ -421,115 +424,6 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     textColor: primaryColor,
                                     fontsize: 14.sp,
                                   )
-                                  // Row(
-                                  //   mainAxisAlignment: MainAxisAlignment.center,
-                                  //   children: [
-                                  //     Container(
-                                  //       height: 1.h,
-                                  //       width: 102.w,
-                                  //       color: Color(0xffE6E6E6),
-                                  //     ),
-                                  //     SizedBox(
-                                  //       width: 8.w,
-                                  //     ),
-                                  //     InterCustomText(
-                                  //       textAlign: TextAlign.center,
-                                  //       text: 'or continue with',
-                                  //       textColor: Color(0xff828282),
-                                  //       fontsize: 14.sp,
-                                  //     ),
-                                  //     SizedBox(
-                                  //       width: 8.w,
-                                  //     ),
-                                  //     Container(
-                                  //       height: 1.h,
-                                  //       width: 102.w,
-                                  //       color: Color(0xffE6E6E6),
-                                  //     ),
-                                  //   ],
-                                  // ),
-                                  // SizedBox(
-                                  //   height: 10.h,
-                                  // ),
-                                  // Container(
-                                  //   width: 327.w,
-                                  //   height: 40.h,
-                                  //   decoration: BoxDecoration(
-                                  //     color: primaryColor.withOpacity(0.3),
-                                  //     borderRadius: BorderRadius.circular(8.r),
-                                  //   ),
-                                  //   child: Row(
-                                  //     mainAxisAlignment:
-                                  //         MainAxisAlignment.center,
-                                  //     children: [
-                                  //       Image.asset(
-                                  //         AppImages.googleIcon,
-                                  //         height: 20.h,
-                                  //         width: 20.w,
-                                  //       ),
-                                  //       SizedBox(
-                                  //         width: 8.w,
-                                  //       ),
-                                  //       Center(
-                                  //         child: InterCustomText(
-                                  //           textAlign: TextAlign.center,
-                                  //           text: 'Google',
-                                  //           textColor: primaryColor,
-                                  //           fontsize: 14.sp,
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                  // SizedBox(
-                                  //   height: 24.h,
-                                  // ),
-                                  // RichText(
-                                  //   textAlign: TextAlign.center,
-                                  //   text: TextSpan(
-                                  //     text:
-                                  //         'By clicking continue, you agree to our ',
-                                  //     style: GoogleFonts.inter(
-                                  //       color: Color(0xff828282),
-                                  //       fontWeight: FontWeight.w400,
-                                  //       fontSize: 12.sp,
-                                  //     ),
-                                  //     children: [
-                                  //       TextSpan(
-                                  //         text: 'Terms of Service',
-                                  //         style: GoogleFonts.inter(
-                                  //           color: primaryColor,
-                                  //           fontWeight: FontWeight.w400,
-                                  //           fontSize: 12.sp,
-                                  //         ),
-                                  //         recognizer: TapGestureRecognizer()
-                                  //           ..onTap = () {
-                                  //             // Navigate to the Terms of Service page
-                                  //           },
-                                  //       ),
-                                  //       TextSpan(
-                                  //         text: ' and ',
-                                  //         style: GoogleFonts.inter(
-                                  //           color: Color(0xff828282),
-                                  //           fontWeight: FontWeight.w400,
-                                  //           fontSize: 12.sp,
-                                  //         ),
-                                  //       ),
-                                  //       TextSpan(
-                                  //         text: 'Privacy Policy',
-                                  //         style: GoogleFonts.inter(
-                                  //           color: primaryColor,
-                                  //           fontWeight: FontWeight.w400,
-                                  //           fontSize: 12.sp,
-                                  //         ),
-                                  //         recognizer: TapGestureRecognizer()
-                                  //           ..onTap = () {
-                                  //             // Navigate to the Privacy Policy page
-                                  //           },
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                       ],
@@ -543,40 +437,4 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
     );
   }
 
-  Future<void> _selectImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _pickedImage = image;
-      });
-      await _uploadImageToFirebase(image);
-    }
-  }
-
-  // Storage
-  Future<void> _uploadImageToFirebase(XFile image) async {
-    try {
-      final storageRef = FirebaseStorage.instance.ref();
-      final imageRef = storageRef
-          .child('user_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      final uploadTask = imageRef.putFile(File(image.path));
-      final snapshot = await uploadTask;
-      final downloadUrl = await snapshot.ref.getDownloadURL();
-
-      await _saveImageUrlToFirestore(downloadUrl);
-      print('Image uploaded and URL saved successfully: $downloadUrl');
-    } catch (e) {
-      print('Failed to upload image: $e');
-    }
-  }
-
-  // Database
-  Future<void> _saveImageUrlToFirestore(String downloadUrl) async {
-    final String userId = FirebaseAuth.instance.currentUser!.uid;
-    final DocumentReference userDocRef =
-        FirebaseFirestore.instance.collection('userDetails').doc(userId);
-    await userDocRef.set({
-      'profile_image': downloadUrl,
-    }, SetOptions(merge: true));
-  }
 }

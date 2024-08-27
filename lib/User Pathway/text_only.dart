@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:kompanyon_app/User%20Pathway/user-pathway10.dart';
-import 'package:kompanyon_app/User%20Pathway/user_pathway9.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/view/home_screen/home_screen.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
@@ -58,7 +56,7 @@ class _TextOnlyState extends State<TextOnly> with SingleTickerProviderStateMixin
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserPathway9() ));
+          //      Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserPathway9() ));
 
               },
               child: Align(

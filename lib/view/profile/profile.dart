@@ -126,17 +126,12 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                               height: 60,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
-                                image: userController
-                                        .userProfileImageUrl.isNotEmpty
-                                    ? DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(userController
-                                            .userProfileImageUrl.value),
-                                      )
-                                    : const DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: AssetImage(AppImages.profilePic),
-                                      ),
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: userController.profileImageUrl.value.isNotEmpty
+                                      ? NetworkImage(userController.profileImageUrl.value)
+                                      : const AssetImage(AppImages.profilePic) as ImageProvider, // Fallback to static image if no URL
+                                ),
                               ),
                             );
                           }),

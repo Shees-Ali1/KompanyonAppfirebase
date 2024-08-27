@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kompanyon_app/User%20Pathway/input_message1.dart';
-import 'package:kompanyon_app/User%20Pathway/input_message2.dart';
-import 'package:kompanyon_app/User%20Pathway/slider3.dart';
 import 'package:kompanyon_app/User%20Pathway/text_only.dart';
 import 'package:kompanyon_app/User%20Pathway/user_pathwayBegin.dart'; // Import UserPathway1
-import 'package:kompanyon_app/User%20Pathway/user_pathway2.dart';
-import 'package:kompanyon_app/User%20Pathway/user_pathway5.dart';
-import 'package:kompanyon_app/User%20Pathway/user_pathway6.dart';
-import 'package:kompanyon_app/User%20Pathway/user_pathway7.dart';
+
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/view/Leadership_screens/Leadership.dart';
 import 'package:kompanyon_app/view/home_screen/components/hear_screen.dart';
@@ -16,8 +10,7 @@ import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'User Pathway/user_pathway1.dart';
-import 'User Pathway/user_pathway4.dart';
+
 
 class ClickableWheel extends StatefulWidget {
   static const double _itemHeight = 45;
@@ -39,13 +32,7 @@ class _ClickableWheelState extends State<ClickableWheel> {
     'Hear': HearScreen(),
     'Learn': Leadership(),
     'Your Pathway': UserPathwayBegin(),
-    'Stress Relief': UserPathway2(),
-    'Other (please specify)': InputMessage1(),
-    'Never': Slider3(),
-    "Don't know how to start": UserPathway5(),
-    'Guided meditation': UserPathway6(),
-    'Reading': UserPathway7(),
-    'Short Daily Practices': InputMessage2(),
+
     'Yes': TextOnly(),
     'Focus & Productivity':NavBar(),
 

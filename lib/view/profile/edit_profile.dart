@@ -1,6 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/const/image.dart';
 import 'package:kompanyon_app/widgets/custom_button.dart';
@@ -8,6 +10,7 @@ import 'package:kompanyon_app/widgets/custom_inter_text.dart';
 import 'package:flutter_screenutil/src/size_extension.dart';
 import 'package:kompanyon_app/widgets/custom_textfield.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../controller/user_controller.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -20,6 +23,18 @@ class _EditProfileState extends State<EditProfile> {
   String? selectedRole;
   final ImagePicker _picker = ImagePicker();
   XFile? _pickedImage;
+  final UserController userController = Get.find<UserController>();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+   bool isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = userController.userName.value;
+    _descriptionController.text = '';
+    selectedRole = userController.userRole.value;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +47,12 @@ class _EditProfileState extends State<EditProfile> {
             onTap: () {
               Navigator.pop(context);
             },
-            child: Icon(
+            child:const Icon(
               Icons.arrow_back,
               color: primaryColor,
               size: 35,
-            )),
+            )
+        ),
       ),
       body: GestureDetector(
         onTap: () {
@@ -58,22 +74,28 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                   height: 15.h,
                 ),
-                Container(
-                  key: ValueKey<String>(_pickedImage?.path ?? 'default'),
-                  width: 100.w,
-                  height: 120.h,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: BoxDecoration(
+                Obx(() {
+                  return Container(
+                    key: ValueKey<String>(_pickedImage?.path ?? 'default'),
+                    width: 100.w,
+                    height: 120.h,
+                    clipBehavior: Clip.hardEdge,
+                    decoration: BoxDecoration(
                       border: Border.all(color: primaryColor, width: 4),
                       borderRadius: BorderRadius.circular(12.r),
                       image: DecorationImage(
-                          image: _pickedImage != null
-                              ? FileImage(File(_pickedImage!.path))
-                              : AssetImage(
-                                  AppImages.profilePic,
-                                ),
-                          fit: BoxFit.cover)),
-                ),
+                        image: _pickedImage != null
+                            ? FileImage(File(_pickedImage!.path))
+                            : userController.profileImageUrl.value.isNotEmpty
+                            ? NetworkImage(userController.profileImageUrl.value)
+                            : AssetImage(AppImages.profilePic)
+                        as ImageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                }),
+
                 SizedBox(
                   height: 15.h,
                 ),
@@ -94,6 +116,7 @@ class _EditProfileState extends State<EditProfile> {
                   height: 15.h,
                 ),
                 InputField(
+                  controller: _nameController,
                   hint: "Display Name",
                   keyboard: TextInputType.name,
                   label: "Full Name",
@@ -154,6 +177,7 @@ class _EditProfileState extends State<EditProfile> {
                   height: 15.h,
                 ),
                 InputField(
+                  controller: _descriptionController,
                   hint: "Short Description",
                   keyboard: TextInputType.name,
                   label: "Short Description",
@@ -164,7 +188,25 @@ class _EditProfileState extends State<EditProfile> {
                 ),
                 CustomButton(
                   text: "Save Changes",
-                  onPressed: () {},
+                  onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
+                    String name = _nameController.text;
+                    String role = selectedRole ?? userController.userRole.value;
+                    String description = _descriptionController.text; // Add logic to get the description if needed
+
+                    // Call the update method
+                    await userController.updateUserData(
+                      name: name,
+                      role: role,
+                      description: description,
+                      imageFile: _pickedImage != null ? File(_pickedImage!.path) : null,
+                    );
+
+                    // Optionally, show a success message or navigate back
+                    Get.snackbar('Success', 'Profile updated successfully');
+                    Navigator.pop(context);},
                   height: 70.h,
                   fontSize: 20.sp,
                 ),
@@ -184,4 +226,5 @@ class _EditProfileState extends State<EditProfile> {
       });
     }
   }
+
 }

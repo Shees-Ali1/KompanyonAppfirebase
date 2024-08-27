@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/Spalsh%20Screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'User Pathway/uploadAssessment.dart';
 import 'firebase_options.dart';
 import 'helper/bindings.dart';
 
@@ -11,7 +12,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
+  await uploadAssessments();
   runApp(const MyApp());
 }
 
