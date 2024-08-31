@@ -60,6 +60,7 @@ class SignupController extends GetxController {
           'createAt': Timestamp.now(),
           'profileImageUrl': profileImageUrl,
           'role': selectedRole.value,
+          'uid': user.uid,
 
         });
 

@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:kompanyon_app/view/profile/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserController extends GetxController {
   String? token;
@@ -19,9 +20,8 @@ class UserController extends GetxController {
   void onInit() {
     super.onInit();
     getUserData();
+    getInit();
   }
-
-
 
   Future<void> updateUserData({
     String? name,
@@ -31,15 +31,20 @@ class UserController extends GetxController {
   }) async {
     try {
       final userId = FirebaseAuth.instance.currentUser!.uid;
-      final userDocRef = FirebaseFirestore.instance.collection('userDetails').doc(userId);
+      final userDocRef =
+          FirebaseFirestore.instance.collection('userDetails').doc(userId);
 
       if (imageFile != null) {
-        final storageRef = FirebaseStorage.instance.ref().child('profile_images').child('$userId.jpg');
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child('$userId.jpg');
         await storageRef.putFile(imageFile);
         final newProfileImageUrl = await storageRef.getDownloadURL();
 
         // Update Firestore with the new profile image URL
-        await userDocRef.set({'profileImageUrl': newProfileImageUrl}, SetOptions(merge: true));
+        await userDocRef.set(
+            {'profileImageUrl': newProfileImageUrl}, SetOptions(merge: true));
         profileImageUrl.value = newProfileImageUrl; // Update local state
       }
 
@@ -47,11 +52,16 @@ class UserController extends GetxController {
       await userDocRef.set({
         'name': name ?? userName.value,
         'role': role ?? userRole.value,
-
+        'uid': userId,
+        'description': description ?? userDescription.value,
       }, SetOptions(merge: true));
 
       userName.value = name ?? userName.value;
       userRole.value = role ?? userRole.value;
+      userDescription.value = description ?? userDescription.value; // Update userDescription
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userDescription', userDescription.value);
     } catch (e) {
       print('Error updating user data: $e');
     }
@@ -62,7 +72,6 @@ class UserController extends GetxController {
       if (Platform.isIOS) {
         token = await FirebaseMessaging.instance.getAPNSToken();
         if (FirebaseAuth.instance.currentUser != null) {
-
           await FirebaseFirestore.instance
               .collection('userDetails')
               .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -85,9 +94,10 @@ class UserController extends GetxController {
   Future<void> getUserData() async {
     try {
       if (FirebaseAuth.instance.currentUser != null) {
+        final userId = FirebaseAuth.instance.currentUser!.uid;
         var userDoc = await FirebaseFirestore.instance
             .collection('userDetails')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .doc(userId)
             .get();
         if (userDoc.exists) {
           userEmail.value = userDoc.data()?['email'] ?? '';
@@ -122,5 +132,10 @@ class UserController extends GetxController {
     }
   }
 
-
+  Future<void> getInit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey("userDescription")) {
+      userDescription.value = prefs.getString("userDescription")!;
+    }
+  }
 }

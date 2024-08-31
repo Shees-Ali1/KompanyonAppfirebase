@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kompanyon_app/User%20Pathway/text_only.dart';
@@ -57,8 +58,9 @@ class _UserPathway1State extends State<UserPathway1>
       QuerySnapshot snapshot = await assessmentsRef.get();
 
       setState(() {
-        assessments =
-            snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+        assessments = snapshot.docs
+            .map((doc) => doc.data() as Map<String, dynamic>)
+            .toList();
       });
     } catch (e) {
       print('Error fetching assessments: $e');
@@ -73,6 +75,46 @@ class _UserPathway1State extends State<UserPathway1>
   }
 
   double _sliderValue = 1;
+
+  Future<void> _storeUserResponses() async {
+    final userId = FirebaseAuth.instance.currentUser!.uid;
+    final assessmentId = assessments[_currentPage]['question'];
+
+    try {
+      final userDocRef = FirebaseFirestore.instance
+          .collection('userResponses')
+          .doc(userId);
+
+      final existingResponses = await userDocRef.get().then((doc) => doc.data() ?? {});
+      final existingResponsesMap = existingResponses['responses'] ?? {};
+
+      await userDocRef.set({
+        'responses': {
+          ...existingResponsesMap,
+          assessmentId: _selectedOptions.isEmpty
+              ? _sliderValue.toString()
+              : _selectedOptions
+        }
+      }, SetOptions(merge: true));
+
+      print("User responses stored successfully!");
+    } catch (e) {
+      print('Error storing user responses: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserResponses(String userId) async {
+    final userDocRef = FirebaseFirestore.instance
+        .collection('userResponses')
+        .doc(userId);
+    final DocumentSnapshot snapshot = await userDocRef.get();
+
+    if (snapshot.exists) {
+      return snapshot.data() as Map<String, dynamic>;
+    } else {
+      return {};
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -300,14 +342,19 @@ class _UserPathway1State extends State<UserPathway1>
                       text: _currentPage == assessments.length - 1
                           ? 'Finish'
                           : 'Next Question', // Update button text
-                      onPressed: () {
+                      onPressed: () async {
                         if (_currentPage < assessments.length - 1) {
+                          await _storeUserResponses();
+                          setState(() {
+                            _selectedOptions.clear();
+                          });
                           pageController.animateToPage(
                             _currentPage + 1,
                             duration: Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
                           );
                         } else {
+                          await _storeUserResponses();
                           Navigator.push(
                               context,
                               MaterialPageRoute(

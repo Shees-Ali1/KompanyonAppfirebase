@@ -26,15 +26,16 @@ class _EditProfileState extends State<EditProfile> {
   final UserController userController = Get.find<UserController>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-   bool isLoading = false;
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
     _nameController.text = userController.userName.value;
-    _descriptionController.text = '';
+    _descriptionController.text = userController.userDescription.value;
     selectedRole = userController.userRole.value;
+    userController.userDescription.value;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +48,11 @@ class _EditProfileState extends State<EditProfile> {
             onTap: () {
               Navigator.pop(context);
             },
-            child:const Icon(
+            child: const Icon(
               Icons.arrow_back,
               color: primaryColor,
               size: 35,
-            )
-        ),
+            )),
       ),
       body: GestureDetector(
         onTap: () {
@@ -95,7 +95,6 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                   );
                 }),
-
                 SizedBox(
                   height: 15.h,
                 ),
@@ -164,7 +163,6 @@ class _EditProfileState extends State<EditProfile> {
                   items: <String>['Admin', 'User', 'Guest']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
-
                       value: value,
                       child: InterCustomText(
                         text: value,
@@ -176,12 +174,18 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                   height: 15.h,
                 ),
-                InputField(
-                  controller: _descriptionController,
-                  hint: "Short Description",
-                  keyboard: TextInputType.name,
-                  label: "Short Description",
-                  maxlines: 3,
+                ValueListenableBuilder(
+                  valueListenable: ValueNotifier(userController.userDescription.value),
+                  builder: (BuildContext context, String value, Widget? child) {
+                    return InputField(
+                      controller: _descriptionController,
+                      hint: "Short Description",
+                      keyboard: TextInputType.name,
+                      label: "Short Description",
+                      maxlines: 3,
+
+                    );
+                  },
                 ),
                 SizedBox(
                   height: 40.h,
@@ -194,7 +198,7 @@ class _EditProfileState extends State<EditProfile> {
                     });
                     String name = _nameController.text;
                     String role = selectedRole ?? userController.userRole.value;
-                    String description = _descriptionController.text; // Add logic to get the description if needed
+                    String description = _descriptionController.text;
 
                     // Call the update method
                     await userController.updateUserData(
@@ -204,9 +208,13 @@ class _EditProfileState extends State<EditProfile> {
                       imageFile: _pickedImage != null ? File(_pickedImage!.path) : null,
                     );
 
+                    // Update the userController's description value
+                    userController.userDescription.value = description;
+
                     // Optionally, show a success message or navigate back
                     Get.snackbar('Success', 'Profile updated successfully');
-                    Navigator.pop(context);},
+                    Navigator.pop(context);
+                  },
                   height: 70.h,
                   fontSize: 20.sp,
                 ),
@@ -226,5 +234,4 @@ class _EditProfileState extends State<EditProfile> {
       });
     }
   }
-
 }
