@@ -1,11 +1,42 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/widgets/custom_button.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/widgets/custom_textfield.dart';
 
-class ChangePassword extends StatelessWidget {
+class ChangePassword extends StatefulWidget {
+  final String email;
+
+  const ChangePassword({super.key, required this.email});
+
+
+  State<ChangePassword> createState() => _ChangePasswordState();
+}
+
+class _ChangePasswordState extends State<ChangePassword> {
+  final TextEditingController emailcontroller=TextEditingController();
+
+  // Send user an email for password reset
+  Future<void> _resetPassword(String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+   Get.snackbar('Success', 'Reset Password has been sent',backgroundColor: whiteColor, colorText: Colors.black);
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      print(e.message);
+// show the snackbar here
+    }
+
+}@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();emailcontroller.text =widget.email;
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +75,10 @@ class ChangePassword extends StatelessWidget {
               SizedBox(
                 height: 30.h,
               ),
+
               InputField(
+                readOnly: true,
+                controller: emailcontroller,
                 hint: "Enter your email",
                 keyboard: TextInputType.name,
                 label: "Your email address",
@@ -55,7 +89,9 @@ class ChangePassword extends StatelessWidget {
               CustomButton(
                 height: 62.h,
                 text: 'Send Link',
-                onPressed: () {},
+                onPressed: () async{
+               await   _resetPassword(widget.email);
+                },
               )
             ],
           ),

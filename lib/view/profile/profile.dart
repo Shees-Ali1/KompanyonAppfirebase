@@ -217,7 +217,7 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => ChangePassword()),
+                        MaterialPageRoute(builder: (context) => ChangePassword(email:userController.userEmail.value,)),
                       );
                     },
                     child: Container(

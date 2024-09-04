@@ -193,9 +193,12 @@ class _EditProfileState extends State<EditProfile> {
                 CustomButton(
                   text: "Save Changes",
                   onPressed: () async {
+                    if (isLoading) return;  // Prevent multiple taps
+
                     setState(() {
                       isLoading = true;
                     });
+
                     String name = _nameController.text;
                     String role = selectedRole ?? userController.userRole.value;
                     String description = _descriptionController.text;
@@ -214,10 +217,15 @@ class _EditProfileState extends State<EditProfile> {
                     // Optionally, show a success message or navigate back
                     Get.snackbar('Success', 'Profile updated successfully');
                     Navigator.pop(context);
+
+                    setState(() {
+                      isLoading = false;
+                    });
                   },
                   height: 70.h,
                   fontSize: 20.sp,
-                ),
+                )
+
               ],
             ),
           ),
