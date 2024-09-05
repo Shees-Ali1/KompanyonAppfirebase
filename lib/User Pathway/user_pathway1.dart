@@ -78,7 +78,8 @@ class _UserPathway1State extends State<UserPathway1>
 
   Future<void> _storeUserResponses() async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
-    final assessmentId = assessments[_currentPage]['question'];
+    // Safely retrieve the assessment ID
+    final assessmentId = assessments[_currentPage]?['question'] ?? '';
 
     try {
       final userDocRef = FirebaseFirestore.instance
@@ -168,7 +169,9 @@ class _UserPathway1State extends State<UserPathway1>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (assessments.isEmpty)
-                  Center(child: CircularProgressIndicator())
+                  SizedBox(
+                      height: 650,
+                      child: Center(child: CircularProgressIndicator(color: primaryColor,)))
                 else ...[
                   Align(
                     alignment: AlignmentDirectional(-1, 0),
@@ -223,7 +226,7 @@ class _UserPathway1State extends State<UserPathway1>
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: InterCustomText(
-                                      text: assess['topic'],
+                                      text: assess['topic'] ?? '',
                                       fontsize: 30.sp,
                                       fontWeight: FontWeight.w500,
                                       textColor: primaryColor,
@@ -236,7 +239,7 @@ class _UserPathway1State extends State<UserPathway1>
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
                                 child: InterCustomText(
-                                  text: assess['question'],
+                                  text: assess['question'] ?? '',
                                   textColor: secondaryText,
                                   fontsize: 18.sp,
                                 ),
@@ -264,13 +267,15 @@ class _UserPathway1State extends State<UserPathway1>
                                                 value: _selectedOptions
                                                     .contains(assess[
                                                 'options'][index]),
-                                                activeColor: primaryColor,
+                                                activeColor:
+                                                primaryColor,
                                                 onChanged:
                                                     (bool? value) {
                                                   setState(() {
                                                     if (value!) {
                                                       _selectedOptions.add(
-                                                          assess['options']
+                                                          assess[
+                                                          'options']
                                                           [index]);
                                                     } else {
                                                       _selectedOptions
@@ -288,7 +293,8 @@ class _UserPathway1State extends State<UserPathway1>
                                                     style: GoogleFonts
                                                         .asul(
                                                       letterSpacing: 0,
-                                                      color: primaryColor,
+                                                      color:
+                                                      primaryColor,
                                                       fontSize: 16.sp,
                                                     )),
                                               ),
@@ -323,7 +329,8 @@ class _UserPathway1State extends State<UserPathway1>
                                             horizontal: 10),
                                         hint:
                                         'Type your Answer here',
-                                        keyboard: TextInputType.text,
+                                        keyboard:
+                                        TextInputType.text,
                                       ),
                                     ),
                                   ),
