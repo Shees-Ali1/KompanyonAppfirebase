@@ -5,6 +5,7 @@ import 'package:kompanyon_app/view/home_screen/home_screen.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
 import 'package:kompanyon_app/widgets/custom_button.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../const/image.dart';
 
@@ -97,23 +98,33 @@ class _TextOnlyState extends State<TextOnly> with SingleTickerProviderStateMixin
                 text: "Agree",
                 onPressed: () {
                   // Navigate to UserPathway9 with custom transition
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>BottomBar(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: animation.drive(Tween(begin: 0.0, end: 1.0)),
-                          child: SlideTransition(
-                            position: animation.drive(Tween<Offset>(
-                                begin: const Offset(-1.0, 0.0), end: const Offset(0.0, 0.0))),
-                            child: child,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+                  // Navigator.pushAndRemoveUntil(
+                  //   context,
+                  //   PageRouteBuilder(
+                  //
+                  //     pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
+                  //       body: BottomBar(), // Use the existing BottomBar here
+                  //     ),                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  //       return FadeTransition(
+                  //         opacity: animation.drive(Tween(begin: 0.0, end: 1.0)),
+                  //         child: SlideTransition(
+                  //           position: animation.drive(Tween<Offset>(
+                  //               begin: const Offset(-1.0, 0.0), end: const Offset(0.0, 0.0))),
+                  //           child: child,
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),  (Route<dynamic> route) => false, // Remove all previous routes
+                  //
+                  //
+                  // );
+                  PersistentNavBarNavigator.pushNewScreen(
+                      context,
+                      screen: BottomBar(),
+                      withNavBar: false,
+                      pageTransitionAnimation:
+                      PageTransitionAnimation.cupertino,
+                      );                },
                 height: 58.h,
               ),
             ),

@@ -242,6 +242,7 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                                     height: 120.h,
                                     clipBehavior: Clip.hardEdge,
                                     decoration: BoxDecoration(
+
                                       border: Border.all(color: primaryColor, width: 4),
                                       borderRadius: BorderRadius.circular(12.r),
                                       image: _profileImage != null
