@@ -1,12 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:kompanyon_app/Spalsh%20Screen/splash_screen.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/controller/signup_contoller.dart';
 import 'package:kompanyon_app/view/Auth/signup_screen.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 class LoginController extends GetxController {
   RxBool isLoading = false.obs;
@@ -26,7 +28,7 @@ class LoginController extends GetxController {
       // User successfully logged in
       User? user = userCredential.user;
       if (user != null) {
-        Get.to(NavBar());
+        Get.to(BottomBar());
         Get.snackbar("Success", "Login Success",
             backgroundColor: whiteColor, colorText: Colors.black);
         print('User logged in: ${user.email}');

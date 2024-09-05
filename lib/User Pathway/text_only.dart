@@ -100,7 +100,7 @@ class _TextOnlyState extends State<TextOnly> with SingleTickerProviderStateMixin
                   Navigator.push(
                     context,
                     PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>NavBar(),
+                      pageBuilder: (context, animation, secondaryAnimation) =>BottomBar(),
                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
                         return FadeTransition(
                           opacity: animation.drive(Tween(begin: 0.0, end: 1.0)),

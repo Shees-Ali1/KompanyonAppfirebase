@@ -130,11 +130,10 @@ class _SignupState extends State<Signup> with SingleTickerProviderStateMixin {
                         SizedBox(height: 160.h),
                         Row(
                           children: [
-                            const Icon(FontAwesomeIcons.anchor,
-                                size: 25, // Adjust the size as needed
-                                color:
-                                    primaryColor // Adjust the color as needed
-                                ),
+                            SizedBox(
+                                height: 70.h,
+                                width: 70.w,
+                                child: Image.asset(AppImages.bglogo)),
                             SizedBox(
                               width: 10.w,
                             ),

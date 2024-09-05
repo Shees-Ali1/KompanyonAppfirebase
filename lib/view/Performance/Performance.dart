@@ -159,7 +159,7 @@ class _PerformanceState extends State<Performance> with SingleTickerProviderStat
                 onTap: () {
                   Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => NavBar()),
+                    MaterialPageRoute(builder: (context) => BottomBar()),
                         (Route<dynamic> route) => false,
                   );
                 },

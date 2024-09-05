@@ -148,7 +148,7 @@ class _LeadershipState extends State<Leadership>   with SingleTickerProviderStat
                 SizedBox(height: 30,),
                 GestureDetector(
                   onTap: () {
-                    Get.offAll(NavBar());
+                    Get.offAll(BottomBar());
 
                   },
                   child: FadeTransition(

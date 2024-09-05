@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
   void _navigateToNextScreen() async {
     await Future.delayed(const Duration(seconds: 2), () {
       FirebaseAuth.instance.currentUser?.uid != null
-          ? Get.offAll(NavBar())
+          ? Get.offAll(BottomBar())
           : Get.offAll(() => TransitionOne());
     });
   }

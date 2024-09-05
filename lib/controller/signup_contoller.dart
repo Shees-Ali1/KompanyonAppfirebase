@@ -64,7 +64,7 @@ class SignupController extends GetxController {
 
         });
 
-        Get.to(NavBar());
+        Get.to(BottomBar());
         Get.snackbar('Success', 'Login Success',
             backgroundColor: whiteColor, colorText: Colors.black);
         print('User signed up: ${user.email}');

@@ -17,7 +17,8 @@ class HearScreen extends StatefulWidget {
   State<HearScreen> createState() => _HearScreenState();
 }
 
-class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMixin {
+class _HearScreenState extends State<HearScreen>
+    with SingleTickerProviderStateMixin {
   AudioPlayer audioPlayer = AudioPlayer();
   late AnimationController _controller;
   late Animation<Offset> _upSlideAnimation;
@@ -31,45 +32,50 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
     {
       'Category': 'Leadership',
       'title': 'Setting Clear Intentions',
-      'duration': '2 min'
+      'duration': '2 min',
+      'file': 'kompanyon-audio.mp3', // Corresponding file for each track
     },
     {
       'Category': 'Leadership',
       'title': 'Visualization for Deep Work',
-      'duration': '4 min'
+      'duration': '4 min',
+      'file': 'CONFLICT AVOIDANCE MASTER.mp3',
     },
     {
       'Category': 'Leadership',
-      'title': 'Upcoming Webinar: Leaders...',
-      'duration': '4 min'
+      'title': 'LISTENING WITH EMPATHY MASTER',
+      'duration': '4 min',
+      'file': 'LISTENING WITH EMPATHY MASTER.mp3',
     },
     {
       'Category': 'Leadership',
-      'title': 'Reflection: Your Pathway',
-      'duration': '3 min'
+      'title': 'TEAM COLLABORATION MEDITATION MASTER',
+      'duration': '3 min',
+      'file': 'TEAM COLLABORATION MEDITATION MASTER.mp3',
     },
   ];
 
-  Future<void> loadAsset() async {
-    final byteData = await rootBundle.load('assets/kompanyon-audio.mp3');
-    final file =
-    File('${(await getTemporaryDirectory()).path}/kompanyon-audio.mp3');
-    await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
-    setState(() {
-      localFilePath = file.path;
-    });
-  }
-
   Future<void> playAudio(int index) async {
-    if (localFilePath != null) {
-      try {
-        await audioPlayer.play(DeviceFileSource(localFilePath!));
-        setState(() {
-          playingIndex = index; // Set the currently playing index
-        });
-      } catch (e) {
-        print("An error occurred: $e");
-      }
+    try {
+      // Get the file name from the items list
+      String assetFileName = items[index]['file']!;
+
+      // Load the audio file from assets
+      final byteData = await rootBundle.load('assets/$assetFileName');
+
+      // Create a file in the temporary directory and write the asset data
+      final file =
+      File('${(await getTemporaryDirectory()).path}/$assetFileName');
+      await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
+
+      // Play the audio file
+      await audioPlayer.play(DeviceFileSource(file.path));
+
+      setState(() {
+        playingIndex = index; // Set the currently playing index
+      });
+    } catch (e) {
+      print("An error occurred: $e");
     }
   }
 
@@ -87,7 +93,7 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
   @override
   void initState() {
     super.initState();
-    loadAsset();
+    // loadAsset();
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -117,7 +123,6 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
-
       },
       child: Scaffold(
           backgroundColor: backgroundColor,
@@ -125,12 +130,31 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
             centerTitle: true,
             backgroundColor: backgroundColor,
             automaticallyImplyLeading: false,
-            title: SlideTransition(
-              position: _upSlideAnimation,
-              child: const InterCustomText(
-                text: 'Hear',
-                textColor: primaryColor,
-              ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 30,
+                  ),
+                ),
+                Spacer(),
+                SlideTransition(
+                  position: _upSlideAnimation,
+                  child: const InterCustomText(
+                    text: 'Hear',
+                    textColor: primaryColor,
+                  ),
+                ),
+                SizedBox(
+                  width: 12,
+                ),
+                Spacer(),
+              ],
             ),
             bottom: const PreferredSize(
               preferredSize: Size.fromHeight(1.0),
@@ -143,16 +167,18 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
           body: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(height: 20.h,),
+                SizedBox(
+                  height: 20.h,
+                ),
                 SlideTransition(
                   position: _rightSlideAnimation,
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
                         width: 16.w,
                       ),
                       CustomSearch(focusNode: searchFocusNode),
-
                     ],
                   ),
                 ),
@@ -200,7 +226,6 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
                                 InterCustomText(
                                   overflow: TextOverflow.ellipsis,
                                   text: items[index]['Category'] ?? "",
-
                                   fontsize: 12.sp,
                                   textColor: blackColor.withOpacity(0.90),
                                 ),
@@ -209,7 +234,6 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
                                   child: InterCustomText(
                                     overflow: TextOverflow.ellipsis,
                                     text: items[index]['title']!,
-
                                     fontsize: 14.sp,
                                     textColor: blackColor,
                                   ),
@@ -225,7 +249,6 @@ class _HearScreenState extends State<HearScreen>with SingleTickerProviderStateMi
                                   child: Center(
                                       child: InterCustomText(
                                         text: items[index]['duration']!,
-
                                         fontsize: 12.sp,
                                         textColor: blackColor,
                                       )),

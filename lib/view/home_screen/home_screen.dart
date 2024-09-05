@@ -31,8 +31,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     "You are reducing stress and increasing focus",
     "Your team dynamics are improving through self-awareness",
     "You are embracing neuroplasticity for personal growth",
-    "Your workplace is becoming more harmonious and efficient"
-        "You are balancing work and well-being effectively",
+    "Your workplace is becoming more harmonious and efficient",
+    "You are balancing work and well-being effectively",
     "Your company culture is thriving with mindfulness",
     "You are contributing to a healthier work ecosystem",
     "Your leadership skills are evolving through mindfulness",
@@ -73,35 +73,42 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _controller.forward();
 
     _loadAffirmationIndex();
-    _incrementAffirmationIndex();
   }
 
   Future<void> _loadAffirmationIndex() async {
     _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _currentIndex = _prefs?.getInt('currentIndex') ?? 0;
-    });
+    _currentIndex = _prefs?.getInt('currentIndex') ?? 0;
+
+    // Load the last saved date
+    String? lastShownDate = _prefs?.getString('lastShownDate');
+    String todayDate = DateTime.now().toString().split(' ')[0];
+
+    // If it's a new day, increment the index
+    if (lastShownDate == null || lastShownDate != todayDate) {
+      _incrementAffirmationIndex();
+      _prefs?.setString('lastShownDate', todayDate);
+    }
 
     // If all affirmations have been shown, reset the index
     if (_currentIndex >= _affirmations.length) {
       _currentIndex = 0;
       _prefs?.setInt('currentIndex', 0);
     }
-  }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    setState(() {});
   }
 
   void _incrementAffirmationIndex() {
     setState(() {
       _currentIndex = (_currentIndex + 1) % _affirmations.length;
       _prefs?.setInt('currentIndex', _currentIndex);
-      print("current");
-
     });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -134,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 80.h),
           Expanded(
             child: FadeTransition(
               opacity: _fadeAnimation,
@@ -146,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-
         ],
       ),
     );

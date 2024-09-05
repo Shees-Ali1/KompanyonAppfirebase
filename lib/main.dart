@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           return GetMaterialApp(
             theme: ThemeManager.currentTheme,
             debugShowCheckedModeBanner: false,
-            home: NavBar(),
+            home: SplashScreen(),
             initialBinding: UserBinding(),
           );
         });
