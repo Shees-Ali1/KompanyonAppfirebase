@@ -1,8 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/const/image.dart';
+
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
+
+import 'article_screen.dart';
 
 class ReadScreen extends StatefulWidget {
   const ReadScreen({super.key});
@@ -12,173 +16,140 @@ class ReadScreen extends StatefulWidget {
 }
 
 class _ReadScreenState extends State<ReadScreen> {
-  final List<Map<String, String>> items = [
-    {
-      'Category': 'Leadership',
-      'title': 'Setting Clear Intentions',
-      'duration': '2 min'
-    },
-    {
-      'Category': 'Leadership',
-      'title': 'Visualization for Deep Work',
-      'duration': '4 min'
-    },
-    {
-      'Category': 'Leadership',
-      'title': 'Upcoming Webinar: Leaders...',
-      'duration': '4 min'
-    },
-    {
-      'Category': 'Leadership',
-      'title': 'Reflection: Your Pathway',
-      'duration': '3 min'
-    },
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: backgroundColor,
         appBar: AppBar(
-          toolbarHeight: 80,
-          backgroundColor: whiteColor,
+          leading: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Icon(
+                Icons.arrow_back,
+                color: primaryColor,
+                size: 35,
+              )),
+          centerTitle: true,
+          toolbarHeight: 80.h,
+          backgroundColor: backgroundColor,
           automaticallyImplyLeading: false,
           title: InterCustomText(
-            text: 'Read',
+            text: 'Articles',
+            fontsize: 30,
             textColor: blackColor,
-
           ),
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-
-              Row(
-                children: [
-                  SizedBox(
-                    width: 16.w,
-                  ),
-                  Container(
-                    width: 295.w,
-                    height: 40.h,
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: containerBorder, width: 1),
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.grey.withOpacity(0.2),
-                      //     spreadRadius: 2,
-                      //     blurRadius: 5,
-                      //     offset: Offset(0, 2), // changes position of shadow
-                      //   ),
-                      // ],
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(
-                          Icons.search,
-                          color: Colors.grey,
-                          size: 30,
-                        ),
-                        hintText: 'Search',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 8.w,
-                  ),
-                  Image.asset(
-                    AppImages.FilterIcon,
-                    width: 40.w,
-                    height: 40.h,
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 30.h,
-              ),
               Padding(
-                padding: EdgeInsets.only(left: 37.w),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text('Category'),
-                        SizedBox(
-                          width: 20.w,
-                        ),
-                        Text('Title'),
-                        Spacer(),
-                        Text('Length'),
-                        SizedBox(
-                          width: 35.w,
-                        ),
-                      ],
-                    ),
-                    Divider(
-                      color: containerBorder,
-                    )
-                  ],
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('articles')
+                      .orderBy('timestamp', descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Text('Error fetching articles');
+                    }
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    final articles = snapshot.data!.docs;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: articles.length,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final articleData =
+                        articles[index].data() as Map<String, dynamic>;
+                        return GestureDetector(
+                          onTap: () {
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ArticleDetails(articleData: articleData,
+                                  //  articleData: articleData,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(bottom: 20.h),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                              color: whiteColor,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (articleData['imageUrl'] != null)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(16.r),
+                                      topRight: Radius.circular(16.r),
+                                    ),
+                                    child: Image.network(
+                                      articleData['imageUrl'],
+                                      height: 200.h,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.all(16.0).r,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      InterCustomText(
+                                        text: articleData['title'],
+                                        textColor: blackColor,
+
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      InterCustomText(
+                                        text: articleData['headline'],
+                                        textColor: blackColor,
+
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      // Show the first 3 lines of the content
+                                      InterCustomText(
+                                        text: articleData['content'],
+                                        textColor: blackColor,
+
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: 37.w, top: 5.h),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InterCustomText(
-                              overflow: TextOverflow.ellipsis,
-                              text: items[index]['Category'] ?? "",
-
-                              fontsize: 12.sp,
-                              textColor: blackColor.withOpacity(0.90),
-                            ),
-                            SizedBox(width: 22),
-                            Expanded(
-                              child: InterCustomText(
-                                overflow: TextOverflow.ellipsis,
-                                text: items[index]['title']!,
-
-                                fontsize: 14.sp,
-                                textColor: blackColor,
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Container(
-                              width: 48.w,
-                              height: 28.h,
-                              // padding: EdgeInsets.all(4.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: containerBorder),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Center(
-                                  child: InterCustomText(
-                                text: items[index]['duration']!,
-
-                                fontsize: 12.sp,
-                                textColor: blackColor,
-                              )),
-                            ),
-                            SizedBox(width: 36.w),
-                          ],
-                        ),
-                        if (index != items.length - 1)
-                          Divider(
-                            color: containerBorder,
-                          )
-                      ],
-                    ),
-                  );
-                },
               ),
             ],
           ),

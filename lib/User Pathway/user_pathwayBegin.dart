@@ -70,7 +70,7 @@ class _UserPathwayBeginState extends State<UserPathwayBegin>
           ),
           GestureDetector(
             onTap: () {
-              Get.to(BottomBar());
+           Navigator.pop(context);
             },
             child: Align(
                 alignment: Alignment.topLeft,

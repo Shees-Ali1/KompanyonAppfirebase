@@ -5,6 +5,7 @@ import 'package:kompanyon_app/User%20Pathway/user_pathwayBegin.dart'; // Import 
 import 'package:kompanyon_app/const/color.dart';
 import 'package:kompanyon_app/view/Leadership_screens/Leadership.dart';
 import 'package:kompanyon_app/view/home_screen/components/hear_screen.dart';
+import 'package:kompanyon_app/view/home_screen/components/read_screen.dart';
 import 'package:kompanyon_app/view/home_screen/home_screen.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
 import 'package:kompanyon_app/widgets/custom_inter_text.dart';
@@ -30,6 +31,7 @@ class _ClickableWheelState extends State<ClickableWheel> {
     'Hear': HearScreen(),
     'Learn': Leadership(),
     'Your Pathway': UserPathwayBegin(),
+    'Read':ReadScreen(),
     // 'Stress Relief': UserPathway2(),
     // 'Other (please specify)': InputMessage1(),
     // 'Never': Slider3(),
