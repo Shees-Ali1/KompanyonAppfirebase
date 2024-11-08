@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/controller/login_controller.dart';
 import 'package:kompanyon_app/controller/user_controller.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
+import '../User Pathway/uploadAssessment.dart';
 import '../const/image.dart';
 import '../view/transition_screen/transition_one.dart';
 import 'package:get/get.dart';

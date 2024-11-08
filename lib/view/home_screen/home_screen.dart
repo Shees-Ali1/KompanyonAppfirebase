@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:kompanyon_app/User%20Pathway/uploadAssessment.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:kompanyon_app/clickable_wheel.dart';
 import 'package:kompanyon_app/const/color.dart';
@@ -76,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Future<void> _loadAffirmationIndex() async {
+    await uploadAssessments();
+
     _prefs = await SharedPreferences.getInstance();
     _currentIndex = _prefs?.getInt('currentIndex') ?? 0;
 
