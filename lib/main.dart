@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kompanyon_app/Spalsh%20Screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:kompanyon_app/theme.dart';
+import 'package:kompanyon_app/view/home_screen/components/hear_screen.dart';
 import 'package:kompanyon_app/view/nav_bar/nav_bar.dart';
 import 'User Pathway/uploadAssessment.dart';
 import 'firebase_options.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
           return GetMaterialApp(
             theme: ThemeManager.currentTheme,
             debugShowCheckedModeBanner: false,
-            home: SplashScreen(),
+            home: HearScreen(),
             initialBinding: UserBinding(),
           );
         });
